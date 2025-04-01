@@ -1,48 +1,48 @@
 pipeline {
-    agent any  // Run on any available agent
+    agent any
 
     environment {
-        // Define any environment variables here
-        // e.g., PATH = '/usr/local/bin:$PATH'
+        GIT_REPO_URL = 'https://github.com/zubiks10/JenkinsNatWest.git'
+        MAVEN_HOME = tool name: 'Maven', type: 'ToolLocation'  // Adjust the Maven tool location if needed
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from the repository
-                git https://github.com/zubiks10/JenkinsNatWest.git
+                script {
+                    // Checkout the code from the specified GitHub repository
+                    echo "Cloning repository from ${GIT_REPO_URL}"
+                    git url: GIT_REPO_URL
+                }
             }
         }
 
         stage('Build') {
             steps {
-                // Example build step: Compile or build your project
                 script {
+                    // Build the project using Maven
                     echo 'Building the project...'
-                    // Add build commands here, like:
-                    // sh './build.sh'
+                    sh "'${MAVEN_HOME}/bin/mvn' clean install -DskipTests"
                 }
             }
         }
 
         stage('Test') {
             steps {
-                // Example test step: Run tests on the project
                 script {
+                    // Run tests using Maven
                     echo 'Running tests...'
-                    // Add test commands here, like:
-                    // sh './run_tests.sh'
+                    sh "'${MAVEN_HOME}/bin/mvn' test"
                 }
             }
         }
 
         stage('Deploy') {
             steps {
-                // Example deploy step: Deploy the application
                 script {
-                    echo 'Deploying the application...'
-                    // Add deploy commands here, like:
-                    // sh './deploy.sh'
+                    // Placeholder for deployment steps
+                    echo 'Deploying the project...'
+                    // Add deployment commands, such as: sh './deploy.sh'
                 }
             }
         }
@@ -50,10 +50,10 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline completed successfully!'
+            echo 'Pipeline completed successfully.'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'There was an issue with the build or deployment.'
         }
     }
 }
